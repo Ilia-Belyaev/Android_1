@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">Homework_1</string>
+    <string name="app_name">Homework1</string>
+    <string name="name">Напишите что-нибудь</string>
+    <string name="yourName">Напишите имя</string>
+    <string name="textPhone">Напишите телефончик</string>
+    <string name="textNumber">Напишите число</string>
+    <string name="textPassword">Напишите пароль</string>
+    <string name="textEmail">Напишите почту</string>
+    <string name="text">Запомнить</string>
+    <string name="info">Смотри, что я знаю...</string>
+    <string name="wash">Помыть посуду</string>
+    <string name="replace">replace</string>
+    <string name="white">I AM WHITE</string>
+    <string name="black">I AM BLACK</string>
 </resources>
