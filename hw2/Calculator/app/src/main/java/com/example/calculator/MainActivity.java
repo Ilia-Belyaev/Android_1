@@ -12,8 +12,3 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 }
-//<androidx.appcompat.widget.AppCompatImageView
-//        android:id="@+id/imageView1"
-//        android:layout_width="match_parent"
-//        android:layout_height="wrap_content"
-//        app:srcCompat="@drawable/photo" />
