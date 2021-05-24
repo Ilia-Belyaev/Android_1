@@ -19,5 +19,5 @@
     <string name="addition">+</string>
     <string name="comma">.</string>
     <string name="equal">=</string>
-    <string name="root">√</string>
+    <string name="negative">+/-</string>
 </resources>

@@ -34,9 +34,9 @@
             android:background="@android:color/transparent"
             android:clickable="false"
             android:contextClickable="false"
+            android:focusable="false"
             android:gravity="end"
             android:text="@string/zero"
-            android:focusable="false"
             android:textSize="20pt" />
 
         <LinearLayout
@@ -219,13 +219,13 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/root"
+                android:id="@+id/negative"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="@color/yellow"
-                android:text="@string/root"
+                android:text="@string/negative"
                 android:textStyle="bold"/>
 
             <androidx.appcompat.widget.AppCompatButton
