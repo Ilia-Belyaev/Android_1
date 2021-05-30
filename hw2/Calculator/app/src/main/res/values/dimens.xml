@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="my_value">16dp</dimen>
+    <dimen name="margin">10dp</dimen>
+    <dimen name="radius">30dp</dimen>
+    <dimen name="default_radius">10dp</dimen>
+    <dimen name="text_size">20pt</dimen>
+    <dimen name="space_layout_height">0dp</dimen>
+    <dimen name="button_style_layout_margin">2dp</dimen>
+    <dimen name="button_style_layout_width">0dp</dimen>
+
+</resources>

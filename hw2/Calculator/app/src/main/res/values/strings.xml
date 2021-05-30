@@ -19,5 +19,10 @@
     <string name="addition">+</string>
     <string name="comma">.</string>
     <string name="equal">=</string>
-    <string name="root">√</string>
+    <string name="negative">+/-</string>
+    <string name="pi">π</string>
+    <string name="e">e</string>
+    <string name="sqrt">√</string>
+    <string name="factorial">!n</string>
+    <string name="absolut">abs</string>
 </resources>
