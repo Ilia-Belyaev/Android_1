@@ -1,12 +1,19 @@
 package com.example.calculator;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,6 +22,8 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private StringBuilder stringBuilder;
+    private final double pi = Math.PI;
+    private final double e = Math.E;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +54,197 @@ public class MainActivity extends AppCompatActivity {
         deleteOneNumber();// <-
         percent();// %
         commaInDouble();// .
-        negativeNumber();
+        negativeNumber();//отрицательные числа
+        dark_theme_button();
+        getScreenOrientation();//проверка ориентации
 
     }
 
+    private void getScreenOrientation() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            number_pi();
+            number_e();
+            sqrt();
+            factorial();//не сделал для дробных чисел, не получилось...
+            absolutValue();
+        }
+
+
+    }
+
+    private void absolutValue() {
+        MaterialButton materialButton = findViewById(R.id.absolute);
+        materialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editText.getText().charAt(0) == '-') {
+                    stringBuilder.deleteCharAt(0);
+                    editText.setText(stringBuilder);
+                }
+            }
+        });
+
+    }
+
+    private void factorial() {
+        MaterialButton factorial = findViewById(R.id.factorial);
+        factorial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] str = stringBuilder.toString().split("(?<!\\d)|(?!\\d)");
+                String newString = stringBuilder.toString();
+                String str1 = str[0];
+                if (str[0].equals("-") || newString.contains("/") || newString.contains("*") || newString.contains("+")) {
+                    clearStringBuilder();
+                    editText.setText(stringBuilder.append("there is no such factorial"));
+                } else {
+                    if (newString.contains(".")) {
+                        for (int i = 1; i < str.length; i++) {
+                            String str2 = str[i + 1];
+                            for (int j = 1; j <= i; j++) {
+                                str1 = str1.concat(str[j]);
+                            }
+                            for (int k = i + 2; k < str.length; k++) {
+                                str2 = str2.concat(str[k]);
+                            }
+                            str1 = str1.concat(str2);
+                            double src = Double.parseDouble(str1);
+                            clearStringBuilder();
+                            editText.setText(stringBuilder.append(Gamma(src)));
+                            break;
+                        }
+                    } else {
+                        for (int z = 1; z < str.length; z++) {
+                            str1 = str1.concat(str[z]);
+                        }
+                        double src = Double.parseDouble(str1);
+                        clearStringBuilder();
+                        editText.setText(stringBuilder.append(Gamma(src)));
+
+                    }
+                }
+            }
+        });
+    }
+
+    private static double Gamma(double z) {
+        int res = (int) z; //целая часть
+        double res2 = z - res; //дробная часть
+        System.out.println((int) Math.pow(res + 1, res2));
+        System.out.println(Math.pow(res + 1, res2));
+        return getFactorial((int) Math.pow(res + 1, res2)) * getFactorial(res);
+    }
+
+    public static int getFactorial(int f) {
+        if (f <= 1) {
+            return 1;
+        } else {
+            return f * getFactorial(f - 1);
+        }
+    }
+
+    private void sqrt() {
+        MaterialButton buttonSqrt = findViewById(R.id.sqrt);
+        buttonSqrt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double myResult = 0;
+                String[] str = stringBuilder.toString().split("(?<!\\d)|(?!\\d)");
+                String newString = stringBuilder.toString();
+                String str1 = str[0];
+
+                if (str[0].equals("-") || newString.contains("/") || newString.contains("*") || newString.contains("+")) {
+                    clearStringBuilder();
+                    editText.setText(stringBuilder.append("the root of a negative number"));
+                } else {
+                    if (newString.contains(".")) {
+                        for (int i = 1; i < str.length; i++) {
+                            String str2 = str[i + 1];
+                            for (int j = 1; j <= i; j++) {
+                                str1 = str1.concat(str[j]);
+                            }
+                            for (int k = i + 2; k < str.length; k++) {
+                                str2 = str2.concat(str[k]);
+                            }
+                            str1 = str1.concat(str2);
+                            myResult = Double.parseDouble(str1);
+                            myResult = Math.sqrt(myResult);
+                            clearStringBuilder();
+                            editText.setText(stringBuilder.append(round(myResult)));
+                            break;
+                        }
+                    } else {
+                        for (int z = 1; z < str.length; z++) {
+                            str1 = str1.concat(str[z]);
+                        }
+                        myResult = Double.parseDouble(str1);
+                        myResult = Math.sqrt(myResult);
+                        clearStringBuilder();
+                        editText.setText(stringBuilder.append(round(myResult)));
+
+                    }
+                }
+            }
+        });
+    }
+
+    private void replaceSign(EditText editText, char myChar) {/////////////////////для смены знака
+        String myStr = String.valueOf(editText.getText());
+        if (myStr.charAt(myStr.length()) == '/' ||
+                myStr.charAt(myStr.length()) == '*' ||
+                myStr.charAt(myStr.length()) == '+' ||
+                myStr.charAt(myStr.length()) == '-') {
+            myStr.substring(0, myStr.length() - 1);
+        }
+
+    }
+
+    private void number_e() {
+        MaterialButton buttonE = findViewById(R.id.e);
+        buttonE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText.setText(stringBuilder.append(e));
+            }
+        });
+    }
+
+    private void number_pi() {
+        MaterialButton buttonPi = findViewById(R.id.pi);
+        buttonPi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText.setText(stringBuilder.append(pi));
+            }
+        });
+    }
+
+
+    private void dark_theme_button() {
+        SwitchCompat switchCompat = findViewById(R.id.switch_compat);
+        switchCompat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentNightMode = getResources().getConfiguration().uiMode
+                        & Configuration.UI_MODE_NIGHT_MASK;
+                switch (currentNightMode) {
+                    case Configuration.UI_MODE_NIGHT_NO: {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                        break;
+                    }
+                    case Configuration.UI_MODE_NIGHT_YES: {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        break;
+                    }
+                    case Configuration.UI_MODE_NIGHT_UNDEFINED: {
+                    }
+                }
+            }
+        });
+    }
+
     private void negativeNumber() {
-        Button negativeButton = findViewById(R.id.negative);
+        MaterialButton negativeButton = findViewById(R.id.negative);
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void commaInDouble() {
-        Button comma = findViewById(R.id.comma);
+        MaterialButton comma = findViewById(R.id.comma);
         comma.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,13 +284,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void percent() {
-        Button percent_100 = findViewById(R.id.percent);
+        MaterialButton percent_100 = findViewById(R.id.percent);
         percent_100.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 double numb = Double.parseDouble(String.valueOf(editText.getText()));
                 numb = numb / 100;
-                System.out.println(numb);
                 clearStringBuilder();
                 editText.setText(stringBuilder.append(numb));
             }
@@ -104,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteOneNumber() {
-        Button delete = findViewById(R.id.delete);
+        MaterialButton delete = findViewById(R.id.delete);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void allClear() {
         int zero = 0;
-        Button clearAll = findViewById(R.id.clear);
+        MaterialButton clearAll = findViewById(R.id.clear);
         clearAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void multiplyNumber() {
-        Button multiply = findViewById(R.id.multiply);
+        MaterialButton multiply = findViewById(R.id.multiply);
         multiply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void splitNumber() {
-        Button split = findViewById(R.id.split);
+        MaterialButton split = findViewById(R.id.split);
         split.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void subtractionNumber() {
-        Button subtraction = findViewById(R.id.subtraction);
+        MaterialButton subtraction = findViewById(R.id.subtraction);
         subtraction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void additionNumber() {
-        Button addition = findViewById(R.id.addition);
+        MaterialButton addition = findViewById(R.id.addition);
         addition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,12 +384,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void result() {
-        Button equal = findViewById(R.id.equal);
+        MaterialButton equal = findViewById(R.id.equal);
         equal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String[] str = stringBuilder.toString().split("(?<!\\d)|(?!\\d)");
-                System.out.println(Arrays.toString(str));
                 takeResult(str);
             }
         });
@@ -208,61 +400,70 @@ public class MainActivity extends AppCompatActivity {
         double myResult;
         for (int i = 1; i < array.length; i++) {
             if (array[0].equals("-")) {
-                if (array[i].equals("+")) {
-                    String str = array[0];
-                    String str2 = array[i + 1];
-                    for (int j = 1; j < i; j++) {
-                        str = str.concat(array[j]);
-                    }
-                    for (int k = i + 2; k < array.length; k++) {
-                        str2 = str2.concat(array[k]);
-                    }
-                    myResult = Double.parseDouble(str) + Double.parseDouble(str2);
-                    clearStringBuilder();
-                    editText.setText(stringBuilder.append(round(myResult)));
-
-                } else if (array[i].equals("-")) {
-                    String str = array[0];
-                    String str2 = array[i + 1];
-                    for (int j = 1; j < i; j++) {
-                        str = str.concat(array[j]);
-                    }
-                    for (int k = i + 2; k < array.length; k++) {
-                        str2 = str2.concat(array[k]);
-                    }
-                    myResult = Double.parseDouble(str) - Double.parseDouble(str2);
-                    clearStringBuilder();
-                    editText.setText(stringBuilder.append(round(myResult)));
-                } else if (array[i].equals("/") && !array[0].equals("/")) {
-                    String str = array[0];
-                    String str2 = array[i + 1];
-                    for (int j = 1; j < i; j++) {
-                        str = str.concat(array[j]);
-                    }
-                    for (int k = i + 2; k < array.length; k++) {
-                        str2 = str2.concat(array[k]);
-                    }
-                    if(str2.equals("0")||str2.equals("0.0")){
-                        String divisionByZero = "Так нельзя!";
-                        clearStringBuilder();
-                        editText.setText(stringBuilder.append(divisionByZero));
-                    }else {
-                        myResult = Double.parseDouble(str) / Double.parseDouble(str2);
+                switch (array[i]) {
+                    case "+": {
+                        String str = array[0];
+                        String str2 = array[i + 1];
+                        for (int j = 1; j < i; j++) {
+                            str = str.concat(array[j]);
+                        }
+                        for (int k = i + 2; k < array.length; k++) {
+                            str2 = str2.concat(array[k]);
+                        }
+                        myResult = Double.parseDouble(str) + Double.parseDouble(str2);
                         clearStringBuilder();
                         editText.setText(stringBuilder.append(round(myResult)));
+
+                        break;
                     }
-                } else if (array[i].equals("*") && !array[0].equals("*")) {
-                    String str = array[0];
-                    String str2 = array[i + 1];
-                    for (int j = 1; j < i; j++) {
-                        str = str.concat(array[j]);
+                    case "-": {
+                        String str = array[0];
+                        String str2 = array[i + 1];
+                        for (int j = 1; j < i; j++) {
+                            str = str.concat(array[j]);
+                        }
+                        for (int k = i + 2; k < array.length; k++) {
+                            str2 = str2.concat(array[k]);
+                        }
+                        myResult = Double.parseDouble(str) - Double.parseDouble(str2);
+                        clearStringBuilder();
+                        editText.setText(stringBuilder.append(round(myResult)));
+                        break;
                     }
-                    for (int k = i + 2; k < array.length; k++) {
-                        str2 = str2.concat(array[k]);
+                    case "/": {
+                        String str = array[0];
+                        String str2 = array[i + 1];
+                        for (int j = 1; j < i; j++) {
+                            str = str.concat(array[j]);
+                        }
+                        for (int k = i + 2; k < array.length; k++) {
+                            str2 = str2.concat(array[k]);
+                        }
+                        if (str2.equals("0") || str2.equals("0.0")) {
+                            String divisionByZero = "Division by zero!";
+                            clearStringBuilder();
+                            editText.setText(stringBuilder.append(divisionByZero));
+                        } else {
+                            myResult = Double.parseDouble(str) / Double.parseDouble(str2);
+                            clearStringBuilder();
+                            editText.setText(stringBuilder.append(round(myResult)));
+                        }
+                        break;
                     }
-                    myResult = Double.parseDouble(str) * Double.parseDouble(str2);
-                    clearStringBuilder();
-                    editText.setText(stringBuilder.append(round(myResult)));
+                    case "*": {
+                        String str = array[0];
+                        String str2 = array[i + 1];
+                        for (int j = 1; j < i; j++) {
+                            str = str.concat(array[j]);
+                        }
+                        for (int k = i + 2; k < array.length; k++) {
+                            str2 = str2.concat(array[k]);
+                        }
+                        myResult = Double.parseDouble(str) * Double.parseDouble(str2);
+                        clearStringBuilder();
+                        editText.setText(stringBuilder.append(round(myResult)));
+                        break;
+                    }
                 }
             } else {
                 if (array[i].equals("+")) {
@@ -302,11 +503,11 @@ public class MainActivity extends AppCompatActivity {
                     for (int k = i + 2; k < array.length; k++) {
                         str2 = str2.concat(array[k]);
                     }
-                    if(str2.equals("0")||str2.equals("0.0")){
-                        String divisionByZero = "Так нельзя!";
+                    if (str2.equals("0") || str2.equals("0.0")) {
+                        String divisionByZero = "Division by zero!";
                         clearStringBuilder();
                         editText.setText(stringBuilder.append(divisionByZero));
-                    }else {
+                    } else {
                         myResult = Double.parseDouble(str) / Double.parseDouble(str2);
                         clearStringBuilder();
                         editText.setText(stringBuilder.append(round(myResult)));
@@ -325,69 +526,6 @@ public class MainActivity extends AppCompatActivity {
                     editText.setText(stringBuilder.append(round(myResult)));
                 }
             }
-
-
-//        for (int i = 0; i < array.length; i++) {
-//            if (array[i].equals("+") && !array[0].equals("+")) {
-//                String str = array[0];
-//                String str2 = array[i + 1];
-//                for (int j = 1; j < i; j++) {
-//                    str = str.concat(array[j]);
-//                }
-//                for (int k = i + 2; k < array.length; k++) {
-//                    str2 = str2.concat(array[k]);
-//                }
-//                myResult = Double.parseDouble(str) + Double.parseDouble(str2);
-//                clearStringBuilder();
-//                editText.setText(stringBuilder.append(round(myResult)));
-//
-//            } else if (array[i].equals("-")) {
-//                String str = array[0];
-//                String str2 = array[negIndex[negIndex.length] + 1];
-//                if (negIndex.length == 2) {
-//                    for (int j = 1; j < i; j++) {
-//                        str = str.concat(array[j]);
-//                    }
-//                    for (int k = i + 2; k < array.length; k++) {
-//                        str2 = str2.concat(array[k]);
-//                    }
-//                } else {
-//                    for (int j = 1; j < i; j++) {
-//                        str = str.concat(array[j]);
-//                    }
-//                    for (int k = i + 2; k < array.length; k++) {
-//                        str2 = str2.concat(array[k]);
-//                    }
-//                }
-//                myResult = Double.parseDouble(str) - Double.parseDouble(str2);
-//                clearStringBuilder();
-//                editText.setText(stringBuilder.append(round(myResult)));
-//            } else if (array[i].equals("/") && !array[0].equals("/")) {
-//                String str = array[0];
-//                String str2 = array[i + 1];
-//                for (int j = 1; j < i; j++) {
-//                    str = str.concat(array[j]);
-//                }
-//                for (int k = i + 2; k < array.length; k++) {
-//                    str2 = str2.concat(array[k]);
-//                }
-//                myResult = Double.parseDouble(str) / Double.parseDouble(str2);
-//                clearStringBuilder();
-//                editText.setText(stringBuilder.append(round(myResult)));
-//            } else if (array[i].equals("*") && !array[0].equals("*")) {
-//                String str = array[0];
-//                String str2 = array[i + 1];
-//                for (int j = 1; j < i; j++) {
-//                    str = str.concat(array[j]);
-//                }
-//                for (int k = i + 2; k < array.length; k++) {
-//                    str2 = str2.concat(array[k]);
-//                }
-//                myResult = Double.parseDouble(str) * Double.parseDouble(str2);
-//                clearStringBuilder();
-//                editText.setText(stringBuilder.append(round(myResult)));
-//            }
-//        }
         }
     }
 
@@ -404,131 +542,101 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buttonZeroListener() {
-        Button buttonZero = findViewById(R.id.zero);
+        MaterialButton buttonZero = findViewById(R.id.zero);
         buttonZero.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(0));
-                String firstNumber = editText.getText().toString();
-                System.out.println(editText.length());
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonOneListener() {
-        Button buttonOne = findViewById(R.id.one);
+        MaterialButton buttonOne = findViewById(R.id.one);
         buttonOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(1));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonTwoListener() {
-        Button buttonTwo = findViewById(R.id.two);
+        MaterialButton buttonTwo = findViewById(R.id.two);
         buttonTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(2));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonThreeListener() {
-        Button buttonThree = findViewById(R.id.three);
+        MaterialButton buttonThree = findViewById(R.id.three);
         buttonThree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(3));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonFourListener() {
-        Button buttonFour = findViewById(R.id.four);
+        MaterialButton buttonFour = findViewById(R.id.four);
         buttonFour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(4));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonFiveListener() {
-        Button buttonFive = findViewById(R.id.five);
+        MaterialButton buttonFive = findViewById(R.id.five);
         buttonFive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(5));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonSixListener() {
-        Button buttonSix = findViewById(R.id.six);
+        MaterialButton buttonSix = findViewById(R.id.six);
         buttonSix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(6));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonSevenListener() {
-        Button buttonSeven = findViewById(R.id.seven);
+        MaterialButton buttonSeven = findViewById(R.id.seven);
         buttonSeven.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(7));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonEightListener() {
-        Button buttonEight = findViewById(R.id.eight);
+        MaterialButton buttonEight = findViewById(R.id.eight);
         buttonEight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(8));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }
 
     private void buttonNineListener() {
-        Button buttonNine = findViewById(R.id.nine);
+        MaterialButton buttonNine = findViewById(R.id.nine);
         buttonNine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(9));
-                //editText.setText(stringBuilder.append(1));
-                String firstNumber = editText.getText().toString();
-                System.out.println(firstNumber);
             }
         });
     }

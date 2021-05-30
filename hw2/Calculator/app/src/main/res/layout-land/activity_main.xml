@@ -51,9 +51,15 @@
             style="@style/layout_style">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/pi"
+                style="@style/button_style"
+                android:text="@string/pi" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/clear"
                 style="@style/button_style"
                 android:text="@string/clear" />
+
 
             <com.google.android.material.button.MaterialButton
 
@@ -75,6 +81,11 @@
         <LinearLayout
             android:id="@+id/linear_layout_2"
             style="@style/layout_style">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/e"
+                style="@style/button_style"
+                android:text="@string/e" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/seven"
@@ -102,6 +113,11 @@
             style="@style/layout_style">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/sqrt"
+                style="@style/button_style"
+                android:text="@string/sqrt" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/four"
                 style="@style/number_button_style"
                 android:text="@string/four" />
@@ -127,6 +143,11 @@
             style="@style/layout_style">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/factorial"
+                style="@style/button_style"
+                android:text="@string/factorial" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/one"
                 style="@style/number_button_style"
                 android:text="@string/one" />
@@ -150,6 +171,11 @@
         <LinearLayout
             android:id="@+id/linear_layout_5"
             style="@style/layout_style">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/absolute"
+                style="@style/button_style"
+                android:text="@string/absolut" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/negative"
