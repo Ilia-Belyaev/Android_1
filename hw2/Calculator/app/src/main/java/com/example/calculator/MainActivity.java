@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SwitchCompat;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,14 +24,65 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private StringBuilder stringBuilder;
+    private String infoString;
     private final double pi = Math.PI;
     private final double e = Math.E;
+    private String sb;
+    final String TAG = "States";
+    private static final int REQUEST_CODE_SETTING_ACTIVITY = 99;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initialization();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        sb = String.valueOf(editText.getText());
+        savedInstanceState.putString(infoString, sb);
+        super.onSaveInstanceState(savedInstanceState);
+
+        Log.d(TAG, "onSaveInstanceState");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        sb = savedInstanceState.getString(infoString);
+        editText.setText(stringBuilder.append(sb));
+        Log.d(TAG, "onRestoreInstanceState");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
     }
 
     private void initialization() {
@@ -55,9 +108,45 @@ public class MainActivity extends AppCompatActivity {
         percent();// %
         commaInDouble();// .
         negativeNumber();//отрицательные числа
-        dark_theme_button();
         getScreenOrientation();//проверка ориентации
+        settingsButton();
 
+
+    }
+
+    private void settingsButton() {
+        MaterialButton settings = findViewById(R.id.settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent runSettings = new Intent(MainActivity.this, SettingsWindow.class);
+                startActivityForResult(runSettings, REQUEST_CODE_SETTING_ACTIVITY);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {
+            return;
+        }
+        int name = data.getIntExtra("numberCode", 0);
+        Log.d(TAG, "Число из другой activity: " + name);
+        dark_theme(name);
+    }
+
+    private void dark_theme(int numberCode) {
+
+        int dayNight = getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        Log.d(TAG, "RESULT " + dayNight);
+        if (dayNight==16 && numberCode == 32) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else if (dayNight==32 && numberCode == 16) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (numberCode==0) {
+        }
     }
 
     private void getScreenOrientation() {
@@ -188,17 +277,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void replaceSign(EditText editText, char myChar) {/////////////////////для смены знака
-        String myStr = String.valueOf(editText.getText());
-        if (myStr.charAt(myStr.length()) == '/' ||
-                myStr.charAt(myStr.length()) == '*' ||
-                myStr.charAt(myStr.length()) == '+' ||
-                myStr.charAt(myStr.length()) == '-') {
-            myStr.substring(0, myStr.length() - 1);
-        }
-
-    }
-
     private void number_e() {
         MaterialButton buttonE = findViewById(R.id.e);
         buttonE.setOnClickListener(new View.OnClickListener() {
@@ -215,30 +293,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 editText.setText(stringBuilder.append(pi));
-            }
-        });
-    }
-
-
-    private void dark_theme_button() {
-        SwitchCompat switchCompat = findViewById(R.id.switch_compat);
-        switchCompat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int currentNightMode = getResources().getConfiguration().uiMode
-                        & Configuration.UI_MODE_NIGHT_MASK;
-                switch (currentNightMode) {
-                    case Configuration.UI_MODE_NIGHT_NO: {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                        break;
-                    }
-                    case Configuration.UI_MODE_NIGHT_YES: {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                        break;
-                    }
-                    case Configuration.UI_MODE_NIGHT_UNDEFINED: {
-                    }
-                }
             }
         });
     }
