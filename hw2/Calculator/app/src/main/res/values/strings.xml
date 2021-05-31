@@ -25,4 +25,6 @@
     <string name="sqrt">√</string>
     <string name="factorial">!n</string>
     <string name="absolut">abs</string>
+    <string name="settings">settings</string>
+
 </resources>
